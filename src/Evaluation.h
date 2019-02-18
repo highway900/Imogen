@@ -35,6 +35,7 @@
 #include "ffmpegCodec.h"
 #include <memory>
 #include "Utils.h"
+#include "Parameters.h"
 
 
 struct ImDrawList;
@@ -204,7 +205,7 @@ struct EvaluationStage
     std::shared_ptr<FFMPEGCodec::Decoder> mDecoder;
     size_t mNodeType;
     unsigned int mParametersBuffer;
-    std::vector<unsigned char> mParameters;
+    ParameterBlock mParameterBlock;
     Input mInput;
     std::vector<InputSampler> mInputSamplers;
     int gEvaluationMask; // see EvaluationMask
