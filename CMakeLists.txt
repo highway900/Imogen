@@ -24,6 +24,9 @@ file(GLOB EXT_FILES
 	${CMAKE_SOURCE_DIR}/ext/GLSL_Pathtracer/*.cpp
 )
 
+set(BGFX_RELEASE_LIBS "bgfxRelease" "bimgRelease" "bxRelease")
+set(BGFX_DEBUG_LIBS "bgfxDebug" "bimgDebug" "bxDebug")
+
 if(WIN32)
 set(NFD_FILES ${CMAKE_SOURCE_DIR}/ext/NativeFileDialog/src/nfd_win.cpp)
 set(PLATFORM_LIBS "libtcc")
@@ -61,6 +64,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/SOIL/include
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/Nvidia-SBVH
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/GLSL_Pathtracer/
+  ${CMAKE_CURRENT_SOURCE_DIR}/ext/bgfx/include
 )
 
 link_directories(
@@ -68,12 +72,13 @@ link_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/tcc-0.9.27/libtcc
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/ffmpeg/lib
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/python37/libs
+  ${CMAKE_CURRENT_SOURCE_DIR}/ext/bgfx/libWinx64_VS2017
 )
 find_package(OpenGL)
 
 #######################################################################################
 
-set (USE_MSVC_RUNTIME_LIBRARY_DLL true)
+set (USE_MSVC_RUNTIME_LIBRARY_DLL false)
 IF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
     #We statically link to reduce dependancies
     FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_CXX_FLAGS_RETAIL)
@@ -114,6 +119,7 @@ endif()
 
 if(MSVC)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
 endif()
 
 
@@ -122,7 +128,8 @@ SET(EXE_NAME "Imogen")
 
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_FILES} ${EXT_FILES} ${NFD_FILES})
 
-TARGET_LINK_LIBRARIES(${EXE_NAME} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS} ${FFMPEG_LIBS} ${PYTHON37_LIBS})
+TARGET_LINK_LIBRARIES(${EXE_NAME} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS} ${FFMPEG_LIBS} ${PYTHON37_LIBS} ${BGFX_DEBUG_LIBS})
+#TARGET_LINK_LIBRARIES(${EXE_NAME} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS} ${FFMPEG_LIBS} ${PYTHON37_LIBS} ${BGFX_RELEASE_LIBS})
 
 #--------------------------------------------------------------------
 # preproc

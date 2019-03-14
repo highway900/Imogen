@@ -28,6 +28,7 @@
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 #include <SDL.h>
+#include <SDL_syswm.h>
 #include <GL/gl3w.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,6 +47,7 @@
 #include "cmft/clcontext_internal.h"
 #include "Loader.h"
 #include "UI.h"
+#include "bgfx/bgfx.h"
 
 unsigned int gCPUCount = 1;
 cmft::ClContext* clContext = NULL;
@@ -190,6 +192,25 @@ int main(int, char**)
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
+
+
+    SDL_SysWMinfo wmInfo;
+    SDL_VERSION(&wmInfo.version);
+    SDL_GetWindowWMInfo(window, &wmInfo);
+
+    bgfx::PlatformData pd;
+    pd.nwh = wmInfo.info.win.window;
+
+    bgfx::Init bgfxInit;
+    bgfxInit.type = bgfx::RendererType::OpenGL;
+    bgfxInit.platformData = pd;
+    if (!bgfx::init(bgfxInit))
+    {
+        Log("BGFX init error");
+        return -1;
+    }
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
+
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
     bool err = gl3wInit() != 0;
@@ -299,6 +320,10 @@ int main(int, char**)
             (io.KeyCtrl && ImGui::IsKeyPressedMap(ImGuiKey_Y)) )
             gUndoRedoHandler.Redo();
 
+        int w, h;
+        SDL_GetWindowSize(window, &w, &h);
+        bgfx::setViewRect(0, 0, 0, w, h);
+        /*
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(window);
@@ -334,7 +359,10 @@ int main(int, char**)
         SDL_GL_MakeCurrent(window, gl_context);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         g_TS.RunPinnedTasks();
+        
         SDL_GL_SwapWindow(window);
+        */
+        bgfx::frame();
     }
     delete builder;
 

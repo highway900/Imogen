@@ -24,7 +24,7 @@
 //
 
 #include <GL/gl3w.h>    // Initialize with gl3wInit()
-#include <fstream>
+//#include <fstream>
 #include "Bitmap.h"
 #include "Utils.h"
 
