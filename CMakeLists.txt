@@ -3,6 +3,9 @@ project (Imogen)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON) 
 
+# Flags added for linux build
+SET (CMAKE_CXX_STANDARD 11)
+
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "Configuration types" FORCE)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
