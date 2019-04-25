@@ -27,7 +27,9 @@
 #include <string>
 #include <float.h>
 #include <vector>
-
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
 void TagTime(const char *tagInfo);
 
 typedef unsigned int TextureID;

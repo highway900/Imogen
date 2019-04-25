@@ -2,6 +2,7 @@
 *.d
 *.pyc
 .build
+CMakeFiles
 
 # Compiled Object files
 *.slo

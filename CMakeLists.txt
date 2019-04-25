@@ -4,7 +4,7 @@ project (Imogen)
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON) 
 
 # Flags added for linux build
-SET (CMAKE_CXX_STANDARD 11)
+SET (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "Configuration types" FORCE)
 
@@ -47,8 +47,11 @@ ADD_DEFINITIONS(${GTK3_CFLAGS_OTHER})
 set(PLATFORM_LIBS dl pthread ${GTK3_LIBRARIES} libtcc.a)
 endif()
 
+set(Python_ADDITIONAL_VERSIONS 3.7)
+find_package(PythonLibs 3 REQUIRED)
+
 set(FFMPEG_LIBS avcodec.lib avdevice.lib avfilter.lib avformat.lib avutil.lib swscale.lib swresample.lib postproc.lib)
-set(PYTHON37_LIBS python3.lib python37.lib)
+# set(PYTHON37_LIBS python3.lib python37.lib)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -59,7 +62,8 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/NativeFileDialog/src/include/
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/enkiTS-C-11/src/
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/ffmpeg/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/ext/python37/include
+  # ${CMAKE_CURRENT_SOURCE_DIR}/usr/include/python3.7
+  ${PYTHON_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/glm/
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/SOIL/include
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/Nvidia-SBVH
@@ -70,13 +74,14 @@ link_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/SDL2-2.0.8/lib/x64
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/tcc-0.9.27/libtcc
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/ffmpeg/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/ext/python37/libs
+  # ${CMAKE_CURRENT_SOURCE_DIR}/usr/lib/python3.7
+  ${PYTHON_LIBRARIES}
 )
 find_package(OpenGL)
 
 #######################################################################################
 
-set (USE_MSVC_RUNTIME_LIBRARY_DLL true)
+set (USE_MSVC_RUNTIME_LIBRARY_DLL false)
 IF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
     #We statically link to reduce dependancies
     FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_CXX_FLAGS_RETAIL)
@@ -125,7 +130,7 @@ SET(EXE_NAME "Imogen")
 
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_FILES} ${EXT_FILES} ${NFD_FILES})
 
-TARGET_LINK_LIBRARIES(${EXE_NAME} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS} ${FFMPEG_LIBS} ${PYTHON37_LIBS})
+TARGET_LINK_LIBRARIES(${EXE_NAME} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS} ${FFMPEG_LIBS} ${PYTHON_LIBRARIES})
 
 #--------------------------------------------------------------------
 # preproc
