@@ -1,10 +1,12 @@
 cmake_minimum_required (VERSION 2.8)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
+
 project (Imogen)
 
-SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON) 
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Flags added for linux build
-SET (CMAKE_CXX_STANDARD 17)
+SET (CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "Configuration types" FORCE)
 
@@ -31,8 +33,7 @@ if(WIN32)
 set(NFD_FILES ${CMAKE_SOURCE_DIR}/ext/NativeFileDialog/src/nfd_win.cpp)
 set(PLATFORM_LIBS "libtcc")
 else()
-set(NFD_FILES ${CMAKE_SOURCE_DIR}/ext/NativeFileDialog/src/nfd_gtk.c
-)
+set(NFD_FILES ${CMAKE_SOURCE_DIR}/ext/NativeFileDialog/src/nfd_gtk.c)
 # Use the package PkgConfig to detect GTK+ headers/library files
 FIND_PACKAGE(PkgConfig REQUIRED)
 PKG_CHECK_MODULES(GTK3 REQUIRED gtk+-3.0)
@@ -50,18 +51,24 @@ endif()
 set(Python_ADDITIONAL_VERSIONS 3.7)
 find_package(PythonLibs 3 REQUIRED)
 
+find_package(SDL2 REQUIRED)
+
+if(WIN32)
 set(FFMPEG_LIBS avcodec.lib avdevice.lib avfilter.lib avformat.lib avutil.lib swscale.lib swresample.lib postproc.lib)
+else()
+    find_package(FFmpeg REQUIRED)
 # set(PYTHON37_LIBS python3.lib python37.lib)
+endif()
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/ext
-  ${CMAKE_CURRENT_SOURCE_DIR}/ext/SDL2-2.0.8/include
+  # ${CMAKE_CURRENT_SOURCE_DIR}/ext/SDL2-2.0.8/include
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/gl3w
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/tcc-0.9.27/
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/NativeFileDialog/src/include/
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/enkiTS-C-11/src/
-  ${CMAKE_CURRENT_SOURCE_DIR}/ext/ffmpeg/include
+  # ${CMAKE_CURRENT_SOURCE_DIR}/ext/ffmpeg/include
   # ${CMAKE_CURRENT_SOURCE_DIR}/usr/include/python3.7
   ${PYTHON_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/glm/
@@ -71,14 +78,15 @@ include_directories(
 )
 
 link_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/ext/SDL2-2.0.8/lib/x64
+  #${CMAKE_CURRENT_SOURCE_DIR}/ext/SDL2-2.0.8/lib/x64
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/tcc-0.9.27/libtcc
   ${CMAKE_CURRENT_SOURCE_DIR}/ext/ffmpeg/lib
   # ${CMAKE_CURRENT_SOURCE_DIR}/usr/lib/python3.7
   ${PYTHON_LIBRARIES}
+  ${SDL2_INCLUDE_DIRS}
 )
 find_package(OpenGL)
-
+find_package (Threads)
 #######################################################################################
 
 set (USE_MSVC_RUNTIME_LIBRARY_DLL false)
@@ -94,7 +102,7 @@ IF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
     ENDFOREACH(flag_var)
 ENDIF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
 
-set(SDL2_LIBS "SDL2" "SDL2main")
+set(SDL2_LIBRARIES "SDL2" "SDL2main")
 
 #######################################################################################
 
@@ -130,7 +138,8 @@ SET(EXE_NAME "Imogen")
 
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_FILES} ${EXT_FILES} ${NFD_FILES})
 
-TARGET_LINK_LIBRARIES(${EXE_NAME} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS} ${FFMPEG_LIBS} ${PYTHON_LIBRARIES})
+TARGET_LINK_LIBRARIES(${EXE_NAME} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS}
+    ${FFMPEG_LIBRARIES} ${SDL2_LIBRARIES} ${PYTHON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 #--------------------------------------------------------------------
 # preproc
@@ -157,6 +166,9 @@ set_target_properties("Imogen" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINF
 set_target_properties("Imogen" PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties("Imogen" PROPERTIES RELWITHDEBINFO_POSTFIX "RelWithDebInfo")
 set_target_properties("Imogen" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
+
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 
 #--------------------------------------------------------------------
 # Hide the console window in visual studio projects

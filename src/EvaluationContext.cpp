@@ -23,9 +23,10 @@
 // SOFTWARE.
 //
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <GL/gl3w.h>    // Initialize with gl3wInit()
 #include <memory>
+#include <thread>
 #include "EvaluationContext.h"
 #include "Evaluators.h"
 #include "NodeGraphControler.h"
@@ -881,7 +882,7 @@ void Builder::BuildEntries()
                 mEntries.erase(mEntries.begin());
             }
         }
-        Sleep(100);
+        sleep(100);
     }
 }
 

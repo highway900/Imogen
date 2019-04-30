@@ -26,8 +26,16 @@
  */
 
 #include "Timer.h"
+#include "Util.h"
 #include <iostream>
-#include <windows.h>
+
+// TODO: this _MSC_VER seems more consistent than my WINDOWS
+#ifdef _MSC_VER // Windows
+#include <Windows.h>
+#else // Linux
+#include <time.h>
+#endif
+
 
 using namespace FW;
 
@@ -40,6 +48,7 @@ S64 Timer::s_prevTicks          = 0;
 #define max(x,y) ((x>y)?x:y)
 void Timer::staticInit(void)
 {
+#ifdef _MSC_VER
     LARGE_INTEGER freq;
 	if (!QueryPerformanceFrequency(&freq))
 	{
@@ -47,15 +56,28 @@ void Timer::staticInit(void)
 		exit(0);
 	}
     s_ticksToSecsCoef = max(1.0 / (F64)freq.QuadPart, 0.0);
+#else
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    s_ticksToSecsCoef = max(1.0 / (F64)now.tv_sec + now.tv_nsec / 1000000000.0, 0.0);
+#endif
  }
 
 S64 Timer::queryTicks(void)
 {
+#ifdef _MSC_VER
+    LARGE_INTEGER freq;
 	LARGE_INTEGER ticks;
 	QueryPerformanceCounter(&ticks);
 	ticks.QuadPart = max(s_prevTicks, ticks.QuadPart);
 	s_prevTicks = ticks.QuadPart; // increasing little endian => thread-safe
 	return ticks.QuadPart;
+#else
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    s_prevTicks = (F64)now.tv_sec + now.tv_nsec / 1000000000.0, 0.0;
+    return (F64)now.tv_sec + now.tv_nsec / 1000000000.0, 0.0;
+#endif
 }
 
 //------------------------------------------------------------------------

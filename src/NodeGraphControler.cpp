@@ -404,14 +404,14 @@ void NodeGraphControler::EditNodeParameters()
     for(const MetaParameter& param : currentMeta.mParams)
     {
         ImGui::PushID(667889 + i);
-        
-        dirty |= EditSingleParameter(unsigned int(index), i, paramBuffer, param);
+
+        dirty |= EditSingleParameter((unsigned)int(index), i, paramBuffer, param);
 
         ImGui::PopID();
         paramBuffer += GetParameterTypeSize(param.mType);
         i++;
     }
-        
+
     if (dirty)
     {
         UpdateDirtyParameter(int(index));

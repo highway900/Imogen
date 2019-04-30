@@ -34,6 +34,12 @@
 #include "Utils.h"
 #include <assert.h>
 
+
+// Forward declare...
+template<typename T> struct Animation;
+template<typename T> float GetComponent(int componentIndex, T& v);
+template<typename T> void SetComponent(int componentIndex, T& v, float value);
+
 struct Camera
 {
     Vec4 mPosition;
@@ -107,7 +113,7 @@ struct InputSampler
     uint32_t mWrapV;
     uint32_t mFilterMin;
     uint32_t mFilterMag;
-    
+
     bool operator != (const InputSampler& other) const
     {
         return (mWrapU != other.mWrapU || mWrapV != other.mWrapV || mFilterMin != other.mFilterMin || mFilterMag != other.mFilterMag);
@@ -280,11 +286,11 @@ template<typename T> struct Animation : public AnimationBase
     }
 
 protected:
-    template<typename T> float GetComponent(int componentIndex, T& v)
+    template<typename GT> float GetComponent(int componentIndex, GT& v)
     {
         return float(v[componentIndex]);
     }
-    template<typename T> void SetComponent(int componentIndex, T& v, float value)
+    template<typename ST> void SetComponent(int componentIndex, ST& v, float value)
     {
         v[componentIndex] = decltype(v[componentIndex])(value);
     }
@@ -302,7 +308,7 @@ protected:
     }
     void SetComponent(int componentIndex, unsigned char& v, float value)
     {
-        v = unsigned char(value);
+        v = (unsigned char)(value);
     }
     void SetComponent(int componentIndex, int& v, float value)
     {

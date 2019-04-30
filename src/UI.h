@@ -29,6 +29,7 @@
 #include "ImGradient.h"
 #include "imgui_markdown/imgui_markdown.h"
 #include <algorithm>
+#include <iterator>
 
 void SetStyle();
 void InitFonts();

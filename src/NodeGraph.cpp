@@ -1177,6 +1177,9 @@ void NodeGraph(NodeGraphControlerBase *controler, bool enabled)
     const ImVec2 windowPos = ImGui::GetCursorScreenPos();
     const ImVec2 canvasSize = ImGui::GetWindowSize();
 
+    bool openContextMenu = false;
+    static int contextMenuHoverNode = -1;
+
     ImRect regionRect(windowPos, windowPos + canvasSize);
 
     HandleZoomScroll(regionRect);
@@ -1212,10 +1215,11 @@ void NodeGraph(NodeGraphControlerBase *controler, bool enabled)
     // Display grid
     DrawGrid(drawList, windowPos, canvasSize, factor);
 
+    static int hoveredNode = -1;
+
     if (!enabled)
         goto nodeGraphExit;
 
-    static int hoveredNode = -1;
     // Display links
     drawList->ChannelsSplit(3);
     drawList->ChannelsSetCurrent(1); // Background
@@ -1267,13 +1271,13 @@ void NodeGraph(NodeGraphControlerBase *controler, bool enabled)
         {
             if (!node.mbSelected)
                 continue;
-            node.Pos += io.MouseDelta / factor; 
+            node.Pos += io.MouseDelta / factor;
         }
     }
 
     // rugs
     drawList->ChannelsSetCurrent(0);
-    
+
 
     // quad selection
     HandleQuadSelection(drawList, offset, factor, regionRect);
@@ -1285,7 +1289,7 @@ void NodeGraph(NodeGraphControlerBase *controler, bool enabled)
         if (EditRug(editRug, drawList, offset, factor))
             editRug = NULL;
     }
-    
+
     // releasing mouse button means it's done in any operation
     if (nodeOperation == NO_PanView )
     {
@@ -1300,8 +1304,6 @@ void NodeGraph(NodeGraphControlerBase *controler, bool enabled)
     }
 
     // Open context menu
-    bool openContextMenu = false;
-    static int contextMenuHoverNode = -1;
     if (nodeOperation == NO_None && regionRect.Contains(io.MousePos) && (ImGui::IsMouseClicked(1) || (ImGui::IsWindowFocused() && ImGui::IsKeyPressedMap(ImGuiKey_Tab))))
     {
         openContextMenu = true;
@@ -1322,7 +1324,7 @@ void NodeGraph(NodeGraphControlerBase *controler, bool enabled)
         scrolling += io.MouseDelta / factor;
     }
 
-nodeGraphExit:;
+nodeGraphExit:
     ImGui::PopItemWidth();
     ImGui::EndChild();
     ImGui::PopStyleColor(1);

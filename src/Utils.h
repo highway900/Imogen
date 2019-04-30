@@ -30,6 +30,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+
+
+#define LINUX 1
+
 void TagTime(const char *tagInfo);
 
 typedef unsigned int TextureID;

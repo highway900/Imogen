@@ -39,8 +39,9 @@ freely, subject to the following restrictions:
 namespace GLSLPathTracer
 {
 
+#ifdef _MSC_VER
     static const float M_PI = 3.14159265358979323846f;
-
+#endif
     static const int kMaxLineLength = 2048;
     int(*Log)(const char* szFormat, ...) = printf;
 
@@ -133,8 +134,11 @@ namespace GLSLPathTracer
     Scene* LoadScene(const std::string &filename)
     {
         FILE* file;
+#ifdef _MSC_VER
         fopen_s(&file, filename.c_str(), "r");
-
+#else
+        file = fopen(filename.c_str(), "r");
+#endif
         if (!file)
         {
             Log("Couldn't open %s for reading\n", filename.c_str());
@@ -401,7 +405,9 @@ namespace GLSLPathTracer
                     Log("Loading Model: %s\n", meshPath.c_str());
                     if (!LoadModel(scene, meshPath, materialId))
                     {
-                        return false;
+                        // TODO: no idea how you can return a bool false for *
+                        // Scene (return false)
+                        return NULL;
                     }
                 }
             }

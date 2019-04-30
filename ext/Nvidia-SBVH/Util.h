@@ -31,11 +31,10 @@
 #include <string>
 #include <ctime>
 
-
 #define FW_F32_MIN          (1.175494351e-38f)
 #define FW_F32_MAX          (3.402823466e+38f)
 #define NULL 0
-#define FW_ASSERT(X) ((void)0)  
+#define FW_ASSERT(X) ((void)0)
 
 typedef unsigned char U8;
 typedef unsigned short U16;

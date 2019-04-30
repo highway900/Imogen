@@ -1,4 +1,5 @@
 #include <Camera.h>
+#include <string.h>
 #include <iostream>
 
 namespace GLSLPathTracer

@@ -25,6 +25,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <strings.h>
 #include <fstream>
 #include "Library.h"
 #include "imgui.h"
@@ -341,7 +342,10 @@ ConTypes GetParameterType(const char* parameterName)
 {
     for (size_t i = 0; i < Con_Any; i++)
     {
-        if (!_stricmp(parameterNames[i], parameterName))
+        // TODO: This needs to change. There is no stricmp case-insensetive
+        // comprision in POSIX
+        // This will break this function, but my goal is to get it too compile.
+        if (!strcmp(parameterNames[i], parameterName))
             return ConTypes(i);
     }
     return Con_Any;

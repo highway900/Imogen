@@ -23,7 +23,7 @@
 // SOFTWARE.
 //
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "imgui.h"
 #include "Imogen.h"
 #include "TextEditor.h"
@@ -1138,7 +1138,7 @@ struct MySequence : public ImSequencer::SequenceInterface
             mbExpansions[index] = false;
             return;
         }
-        for (auto& item : mbExpansions)
+        for (auto item : mbExpansions)
             item = false;
         mbExpansions[index] = !mbExpansions[index];
     }

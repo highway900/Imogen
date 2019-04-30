@@ -23,7 +23,7 @@
 // SOFTWARE.
 //
 #include <GL/gl3w.h>    // Initialize with gl3wInit()
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <vector>
 #include "Utils.h"
 #include "EvaluationStages.h"
@@ -503,12 +503,20 @@ void DiscoverFiles(const char *extension, const char *directory, std::vector<std
 
 void IMessageBox(const char *text, const char *title)
 {
+#ifdef WINDOWS
     MessageBoxA(NULL, text, title, MB_OK);
+#elif LINUX
+    std::cout << "text: " << text << "title: " << title << std::endl;
+#endif
 }
 
 void OpenShellURL(const std::string &url)
 {
+#ifdef WINDOWS
     ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+#elif LINUX
+    std::cout << "open: " << url.c_str() << std::endl;
+#endif
 }
 
 void GetTextureDimension(unsigned int textureId, int *w, int *h)

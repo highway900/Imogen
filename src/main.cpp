@@ -27,11 +27,11 @@
 #include "imgui_internal.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <GL/gl3w.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h> 
+#include <stdio.h> 
 #include <fcntl.h> 
 #include "NodeGraph.h"
 #include "NodeGraphControler.h"
